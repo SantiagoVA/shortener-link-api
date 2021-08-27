@@ -144,5 +144,12 @@ func Redirect(c *fiber.Ctx) error {
 			"refreshToken": nil,
 		})
 	}
-	return c.Redirect(link.InputLink, 301)
+
+	return c.JSON(map[string]interface{}{
+		"error":        false,
+		"message":      "Link found",
+		"data":         link.OutputLink,
+		"token":        nil,
+		"refreshToken": nil,
+	})
 }

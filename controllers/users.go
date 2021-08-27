@@ -324,3 +324,29 @@ func AuthMiddleware(c *fiber.Ctx) error {
 	}
 	return c.Next()
 }
+
+func ListLinks(c *fiber.Ctx) error {
+	token := c.Get("token", "")
+	_, claims := functions.IsValidToken(token)
+	id := claims["id"].(string)
+	var user *models.User
+	err := linksCollection.FindOne(context.Background(), bson.M{"id": id}).Decode(&user)
+	if err != nil {
+		c.Status(404)
+		return c.JSON(map[string]interface{}{
+			"error":        true,
+			"message":      "User not found",
+			"data":         nil,
+			"token":        nil,
+			"refreshToken": nil,
+		})
+	}
+
+	return c.JSON(map[string]interface{}{
+		"error":        false,
+		"message":      "Links found",
+		"data":         user.Links,
+		"token":        nil,
+		"refreshToken": nil,
+	})
+}

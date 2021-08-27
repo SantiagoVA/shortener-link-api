@@ -7,12 +7,15 @@ import (
 )
 
 func Register(app *fiber.App) {
-	app.Get("/", controllers.Default)
-	app.Get("/l/:id", controllers.Redirect)
-	app.Post("/new", controllers.NewShorted)
-	app.Post("/signup", controllers.SignUp)
-	app.Post("/login", controllers.Login)
+	api := app.Group("/api")
+	api.Get("/", controllers.Default)
+	api.Get("/l/:id", controllers.Redirect)
+	api.Post("/new", controllers.NewShorted)
+	api.Post("/signup", controllers.SignUp)
+	api.Post("/login", controllers.Login)
 
-	profile := app.Group("/profile", controllers.AuthMiddleware)
+	profile := api.Group("/profile", controllers.AuthMiddleware)
 	profile.Post("/update", controllers.UpdateProfile)
+	profile.Get("/links", controllers.ListLinks)
+	api.Delete("/delete", controllers.DeleteUser)
 }
